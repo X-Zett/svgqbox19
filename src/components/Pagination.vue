@@ -2,7 +2,7 @@
   <div class="pagination-row">
       <button class="arrow">&lt;-</button>
       <span v-for="(item, index) in new Array(10)" :key="index">
-          <button class="num_page">{{index + 1}}</button>
+          <button class="num_page" @click="paginationClick(index + 1)">{{index + 1}}</button>
       </span>
       <button class="arrow">-&gt;</button>
   </div>
@@ -10,8 +10,19 @@
 </template>
 
 <script>
+import All_Icons from './All_Icons.vue';
 export default {
-    name: "Pagination"
+    name: "Pagination",
+    // components: {All_Icons},
+    data() {
+        return {
+        }
+    },
+    methods: {
+        paginationClick(index) {
+            All_Icons.methods.paginationFunc(index)
+        }
+    },
 }
 </script>
 

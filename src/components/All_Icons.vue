@@ -9,7 +9,7 @@
     </div>
 
     <div class="icon_box">
-        <div class="icons_main" v-for="icon in icons" :key="icon.id">
+        <div class="icons_main" v-for="icon in filteredIcons()" :key="icon.id">
             <img :src="icon.url" style="width: 45px; margin: 20px; " alt="">
         </div>
     </div>
@@ -35,44 +35,66 @@ export default {
     components: {Pagination},
 
     data() {
-
-
         return {
             icons: [],
-            search: ''
+            search: '',
+            currentPage: 1, // 3616 страниц
+            pageSize: 60, // Размер страницы
+            totalIcons: 0
         }
 
     },
     methods: {
-
         async getIcons() {
             const {data} = await axios.get("https://svg.q19.kz/api/v1/icons/", {
                 params: {
-                    limit: 60,
+                    limit: this.pageSize,
                     keyword: this.search.toLowerCase(),
-                    page: 1
-
+                    page: this.currentPage
                 }
             })
-            console.log("res", data)
+            console.log("res", data.data)
             this.icons = data.data
+            this.totalIcons = data.total;
         },
 
-
-         searchInput(event) {
-             this.filteredIcons();
-         },
+        async searchInput(event) {
+            this.currentPage = 1
+            await this.getIcons();
+            this.filteredIcons();
+        },
         filteredIcons() {
-                     this.getIcons()
-                    return this.icons
-                }
+            // this.getIcons()
+            return this.icons
+        },
+        async paginationFunc(index) {
+            this.currentPage = index
+            console.log("Success", this.currentPage);
+            await this.getIcons()
+            this.filteredIcons()
+        },
+
+        // async paginationIcons() {
+        //     console.log("Success", index)
+        //     const {data} = await axios.get("https://svg.q19.kz/api/v1/icons/", {
+        //         params: {
+        //             limit: this.pageSize,
+        //             keyword: this.search,
+        //             page: index
+        //         }
+        //     })
+        //     this.icons = data.data
+        //     this.filteredIcons()
+        // }
+
     },
 
 
 
 
-    created() {
-        this.getIcons()
+    async created() {
+        await this.getIcons()
+        this.filteredIcons()
     },
 
 
